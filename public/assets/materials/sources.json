@@ -1,0 +1,122 @@
+[
+  {
+    "name": "oak-color.jpg",
+    "md5": "34ab81c5882c1083028ffa71d40fe44d",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/laminate_floor_02/laminate_floor_02_diff_1k.jpg",
+    "asset": "laminate_floor_02"
+  },
+  {
+    "name": "oak-normal.jpg",
+    "md5": "40f4b1e4a5cafbd3bd1b02e8367cf3b1",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/laminate_floor_02/laminate_floor_02_nor_gl_1k.jpg",
+    "asset": "laminate_floor_02"
+  },
+  {
+    "name": "oak-roughness.jpg",
+    "md5": "6ef14a4d438a44103689739248ef50b7",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/laminate_floor_02/laminate_floor_02_rough_1k.jpg",
+    "asset": "laminate_floor_02"
+  },
+  {
+    "name": "fabric-color.jpg",
+    "md5": "1287d4d1183c511e4adc55b8d006d763",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/rough_linen/rough_linen_diff_2k.jpg",
+    "asset": "rough_linen"
+  },
+  {
+    "name": "fabric-normal.jpg",
+    "md5": "facad45539d3011e197bd87562ba1679",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/rough_linen/rough_linen_nor_gl_2k.jpg",
+    "asset": "rough_linen"
+  },
+  {
+    "name": "fabric-roughness.jpg",
+    "md5": "fb70674c782d6bead54c8baaae2b77db",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/rough_linen/rough_linen_rough_2k.jpg",
+    "asset": "rough_linen"
+  },
+  {
+    "name": "stone-color.jpg",
+    "md5": "04325ced5018eb8a2e598a4ef69cb176",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_01/marble_01_diff_1k.jpg",
+    "asset": "marble_01"
+  },
+  {
+    "name": "stone-normal.jpg",
+    "md5": "fa073d722cde733c1bd6cc6e8897c8e3",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_01/marble_01_nor_gl_1k.jpg",
+    "asset": "marble_01"
+  },
+  {
+    "name": "stone-roughness.jpg",
+    "md5": "59cef1be1b7376c9d0dcc7a64adf7882",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_01/marble_01_rough_1k.jpg",
+    "asset": "marble_01"
+  },
+  {
+    "name": "plaster-normal.jpg",
+    "md5": "55fc03203ebf1dc703a380fde93ff502",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_plaster_02/white_plaster_02_nor_gl_1k.jpg",
+    "asset": "white_plaster_02"
+  },
+  {
+    "name": "daylight.hdr",
+    "md5": "995d68b1656f26452572645c0ffe898b",
+    "source": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloppenheim_06_puresky_1k.hdr",
+    "asset": "kloppenheim_06_puresky"
+  },
+  {
+    "name": "street-color.jpg",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_diff_1k.jpg",
+    "asset": "asphalt_02",
+    "md5": "fa19772d4817754c3efab708c651f5a8"
+  },
+  {
+    "name": "street-normal.jpg",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_nor_gl_1k.jpg",
+    "asset": "asphalt_02",
+    "md5": "338da8de636ea36133170578cac82e8e"
+  },
+  {
+    "name": "street-roughness.jpg",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_rough_1k.jpg",
+    "asset": "asphalt_02",
+    "md5": "ec80a2929797c1b3ffc121c4f665585a"
+  },
+  {
+    "name": "pavement-color.jpg",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cobblestone_floor_05/cobblestone_floor_05_diff_1k.jpg",
+    "asset": "cobblestone_floor_05",
+    "md5": "ce9c4e4ebaf46f2c671eb82269382177"
+  },
+  {
+    "name": "pavement-normal.jpg",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cobblestone_floor_05/cobblestone_floor_05_nor_gl_1k.jpg",
+    "asset": "cobblestone_floor_05",
+    "md5": "2a8102c04d44a4d63ea0573a429b461b"
+  },
+  {
+    "name": "pavement-roughness.jpg",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cobblestone_floor_05/cobblestone_floor_05_rough_1k.jpg",
+    "asset": "cobblestone_floor_05",
+    "md5": "b01d98f7ea98350d48680e37eb6819b0"
+  },
+  {
+    "name": "retaining-color.jpg",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_wall_02/rock_wall_02_diff_1k.jpg",
+    "asset": "rock_wall_02",
+    "md5": "19204f9cc44062a87bb9270c1341c237"
+  },
+  {
+    "name": "retaining-normal.jpg",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_wall_02/rock_wall_02_nor_gl_1k.jpg",
+    "asset": "rock_wall_02",
+    "md5": "218d1718fe8d64e096ca59e40a1a3e67"
+  },
+  {
+    "name": "retaining-roughness.jpg",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_wall_02/rock_wall_02_rough_1k.jpg",
+    "asset": "rock_wall_02",
+    "md5": "cdda4828265f954a1509f1973376907f"
+  }
+]

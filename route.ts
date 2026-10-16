@@ -1,0 +1,1 @@
+export function route(path:string){const slug=path.replace(/^\/varandas-sto-antonio-imobretanha\/?/,'').replace(/\/$/,'');const id=slug.match(/^fracao\/([a-z])$/i)?.[1].toUpperCase();return {page:(['apartamentos','projeto','perguntas','contacto'].includes(slug)?slug:'home') as 'home'|'apartamentos'|'projeto'|'perguntas'|'contacto',initialId:id};}
