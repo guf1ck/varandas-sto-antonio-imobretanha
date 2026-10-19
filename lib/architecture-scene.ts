@@ -83,10 +83,8 @@ export function makeInterior(plan:ApartmentPlan,useful?:number,unitId?:string,do
    cylinder(g,.012,.014,.21,tapX,1.02,tapZ,materials.graphite);
    const tap=new T.Mesh(new T.TorusGeometry(.065,.012,6,16,Math.PI),materials.graphite);tap.position.set(tapX,1.125,tapZ+.065);tap.rotation.y=Math.PI/2;g.add(tap);
    cylinder(g,.012,.012,.045,tapX,1.105,tapZ+.13,materials.graphite);
-   soft(g,w*.24,.013,d*.65,-w*.25,.912,0,materials.graphite,.012);
-   for(const xx of [-1,1])for(const zz of [-1,1]){
-    const ring=new T.Mesh(new T.TorusGeometry(Math.min(w*.035,d*.10),.003,4,20),brass);ring.rotation.x=Math.PI/2;ring.position.set(-w*.25+xx*w*.052,.921,zz*d*.16);g.add(ring);
-   }
+   // Continuous worktop: electric hob removed at the owner's request.
+
   }
 
  }
