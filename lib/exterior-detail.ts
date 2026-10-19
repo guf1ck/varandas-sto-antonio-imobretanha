@@ -1,10 +1,11 @@
 import * as T from 'three';
 
 // Plan topology and video references are recorded in docs/EXTERIOR.md.
-// Vertical dimensions are illustrative; the supplied set has no elevations/sections.
+// Front opening proportions traced from PRE.AH.01; side openings from PRE.AH.03 (received 19 Oct 2026).
+// Floor-4 terrace perimeter follows the owner-marked plan; unsurveyed depths remain illustrative.
 export const buildingBlocks=[{id:1,x:22,w:22,levels:4,z:0},{id:2,x:0,w:22,levels:5,z:0},{id:3,x:-21,w:20,levels:5,z:0}];
 type Palette=Record<string,T.Material>;
-type Opening={x:number;w:number;sill:number;h:number};
+type Opening={x:number;w:number;sill:number;h:number;panes?:number};
 export function detailExterior(structure:T.Group,m:Palette){
  const counts={sideWindows:0,rearWindows:0,garagePortals:0,stairCores:0,sideBalconies:0,balconyEndWalls:0,flushEndWalls:0,frontEntrances:[] as {x:number;y:number}[]};
  function box(p:T.Object3D,w:number,h:number,d:number,x:number,y:number,z:number,mat='plaster'){
@@ -21,7 +22,7 @@ export function detailExterior(structure:T.Group,m:Palette){
   box(p,o.w,o.h,.035,o.x,y,0,'glass');
   for(const x of [o.x-o.w/2,o.x+o.w/2])box(p,.065,o.h+.08,.15,x,y,.025,'graphite');
   for(const h of [base+o.sill,base+o.sill+o.h])box(p,o.w+.1,.065,.15,o.x,h,.025,'graphite');
-  const panes=Math.max(2,Math.ceil(o.w/1.3));for(let i=1;i<panes;i++)box(p,.04,o.h,.1,o.x-o.w/2+i*o.w/panes,y,.03,'graphite');
+  const panes=o.panes??Math.max(2,Math.ceil(o.w/1.3));for(let i=1;i<panes;i++)box(p,.04,o.h,.1,o.x-o.w/2+i*o.w/panes,y,.03,'graphite');
   box(p,o.w+.16,.06,.28,o.x,base+o.sill-.055,.06,'stone');
   if(o.h>1.8){box(p,.035,.24,.07,o.x+.12,y-.2,.11,'graphite');box(p,o.w+.1,.18,.20,o.x,base+o.sill+o.h+.12,-.08,'plaster');}
  }
@@ -41,29 +42,66 @@ export function detailExterior(structure:T.Group,m:Palette){
   const g=new T.Group();g.position.set(b.x,0,b.z);structure.add(g);
   const first=b.id===1?0:b.id===2?1:2;
   for(let f=0;f<=b.levels;f++){
-   const base=f*3.05;box(g,b.w+.28,.22,13.2,0,base,0);
+   const base=f*3.05;
+   // Roof only covers the enclosed penthouse; the eastern strip is open terrace.
+   const roofCut=b.id===2&&f===b.levels;
+   box(g,roofCut?15.68:b.w+.28,.22,13.2,roofCut?-3.3:0,base,0);
+   if(b.id===1&&f===b.levels)box(g,1.85,.22,13.12,b.w/2+.78,base,0);
    if(f===b.levels)continue;
-   const penthouse=b.id===2&&f===4,width=penthouse?15:b.w,center=penthouse?-3.5:0;
-   if(penthouse){box(g,7,.15,13,7.5,base+.18,0,'stone');rail(g,7,7.5,base+.2,6.32);box(g,.22,1.05,12.6,11,base+.725,0);}
+   const penthouse=b.id===2&&f===4,width=penthouse?15.4:b.w,center=penthouse?-3.3:0;
+   if(penthouse){
+    box(g,6.6,.15,13,7.7,base+.18,0,'stone');
+    // Continuous orange perimeter: front, eastern return and short rear return.
+    rail(g,6.6,7.7,base+.2,6.32);
+    rail(g,12.64,11,base+.2,0,Math.PI/2);
+    rail(g,6.6,7.7,base+.2,-6.32);
+   }
    if(f>=first){
+    // Window-map spans in a common elevation reference (PRE.AH.01).
+    const elevationOpenings=(spans:number[][],left:number,right:number):Opening[]=>spans.map(([a,b,panes])=>({x:((a+b)/2-left)/(right-left)*bWidth-bWidth/2,w:(b-a)/(right-left)*bWidth,sill:.16,h:2.34,panes}));
+    const bWidth=b.w;
     const front:Opening[]=b.id===1?
-     [{x:-8.7,w:2.3,sill:.16,h:2.34},{x:-4,w:4.1,sill:.16,h:2.34},{x:1.1,w:4.1,sill:.16,h:2.34},{x:5.4,w:2.1,sill:.16,h:2.34},{x:8.65,w:2.25,sill:f>1?1.45:.16,h:f>1?.82:2.34}]:
-     (penthouse?[-8.6,-4.8,-.6]:[-b.w*.40,-b.w*.22,0,b.w*.22,b.w*.40]).map((x,i)=>({x:x-center,w:penthouse?3.1:i===2?4.4:2.4,sill:.16,h:2.34}));
+     (f===0?[...elevationOpenings([[1295,1410,4],[1417,1493,2],[1497,1541,2],[1548,1586,2],[1591,1668,2],[1676,1730,2]],1114,1788),{x:-9.53,w:2.42,sill:0,h:2.5},{x:-6.65,w:2.74,sill:0,h:2.5}]:
+      [...elevationOpenings(f===2?[[1122,1196,3],[1204,1253,2],[1292,1408,4],[1417,1540,4]]:[[1122,1170,2],[1205,1253,2],[1292,1408,4],[1417,1540,4]],1114,1788),{x:8.65,w:2.94,sill:1.45,h:.82,panes:4}]):
+     (penthouse?[{x:-8.93,w:3.70,panes:4},{x:-5.56,w:2.74,panes:3},{x:-2.59,w:2.74,panes:3},{x:1.70,w:5.40,panes:4}].map(o=>({...o,x:o.x-center,sill:.16,h:2.34})):
+      elevationOpenings(f===2?[[524,574,2],[606,656,2],[694,812,4],[820,938,4],[945,996,2],[1030,1080,2]]:[[548,598,2],[636,686,2],[694,812,4],[820,938,4],[945,996,2],[1030,1080,2]],520,1114));
+    const flushWest=b.id===3;
+    if(flushWest){
+     // VE125/VE113: narrow vertical openings; VE104: wide opening at the lower occupied level.
+     const split=-1.3,leftWidth=split+b.w/2,leftCenter=(split-b.w/2)/2;
+     const leftOpening=f===2?{x:1.45,w:4.25,sill:.16,h:2.34,panes:3}:{x:2.95,w:1.2,sill:.16,h:2.34,panes:1};
+     facade(g,leftWidth,2.83,base+.12,leftCenter,6.32,0,[leftOpening]);
+     facade(g,b.w/2-split,2.83,base+.12,(split+b.w/2)/2,4.5,0,[{x:-2,w:6.8,sill:.16,h:2.34,panes:4},{x:3.45,w:3.5,sill:.16,h:2.34,panes:2}]);
+     rail(g,b.w/2-split,(split+b.w/2)/2,base+.2,6.32);
+     box(g,.20,2.83,1.82,split,base+1.535,5.41);
+    }
     // Owner's annotated elevation: the right-hand solid bay is flush with the balcony edge.
     const flushEnd=b.id===1&&f>=1;
     if(flushEnd){
-     const split=7.25;
+     const split=(1542-1114)/(1788-1114)*b.w-b.w/2;
      facade(g,split+b.w/2,2.83,base+.12,(split-b.w/2)/2,4.5,0,front.filter(o=>o.x<split).map(o=>({...o,x:o.x-(split-b.w/2)/2})));
-     facade(g,b.w/2-split,2.83,base+.12,(split+b.w/2)/2,6.32,0,[{x:0,w:2.25,sill:1.45,h:.82}]);
+     facade(g,b.w/2-split,2.83,base+.12,(split+b.w/2)/2,6.32,0,[{x:-1.15,w:2.94,sill:1.45,h:.82,panes:4}]);
      box(g,.20,2.83,1.82,split,base+1.535,5.41);
      rail(g,split+b.w/2,(split-b.w/2)/2,base+.2,6.32);counts.flushEndWalls++;
-    }else{facade(g,width,2.83,base+.12,center,4.5,0,front);rail(g,width,center,base+.2,6.32);}
-    for(const x of (penthouse?[-11,4]:[-b.w/2,-b.w*.3,0,b.w*.3,b.w/2]))box(g,.20,2.83,1.75,x,base+1.54,5.35);
+    }else if(!flushWest){facade(g,width,2.83,base+.12,center,4.5,0,front);if(b.id===1&&f===0)rail(g,16.08,2.96,base+.2,6.32);else rail(g,width,center,base+.2,6.32);}
+    if(b.id===1&&f===0){
+     // Accesses occupy the left end of building 1 in PRE.AH.01, not building 2.
+     const garageX=-9.53,doorX=-6.65;
+     box(g,2.42,2.45,.08,garageX,1.25,4.62,'graphite');
+     for(let i=0;i<15;i++)box(g,2.38,.025,.025,garageX,.12+i*.16,4.68,'stone');
+     box(g,2.64,2.45,.08,doorX,1.25,4.62,'graphite');
+     box(g,1.95,1.6,.03,doorX,1.47,4.68,'glass');
+     box(g,.04,.55,.08,doorX+.9,1.15,4.74,'stone');
+     box(g,.16,.29,.08,doorX+1.43,1.4,4.7,'graphite');
+     box(g,5.7,.12,2.35,-8.1,.04,5.6,'stone');
+     counts.garagePortals++;counts.frontEntrances.push({x:b.x+doorX,y:base});
+    }
+    for(const x of (penthouse?[-11,4.4]:flushWest?[-1.3,5.5,10]:(b.id===1?[-11,-8.1,-4.5,2.9,b.w/2]:[-11,-4.8,.1,4.6,b.w/2])))box(g,.20,2.83,1.75,x,base+1.54,5.35);
    }else{
     // Parking and common areas: opaque plinth, ventilation and service doors.
-    const entryX=b.w/2-1.6,entryFloor=f===first-1;
-    const garage=entryFloor&&b.id===2;
-    const openings:Opening[]=entryFloor?[{x:entryX,w:1.9,sill:0,h:2.5},...(garage?[{x:entryX-3.45,w:4.0,sill:0,h:2.5}]:[]),{x:-b.w*.3,w:2.4,sill:1.8,h:.6}]:[-b.w*.3,0,b.w*.3].map(x=>({x,w:2.4,sill:1.8,h:.6}));
+    const entryX=b.w/2-1.6,entryFloor=b.id===3&&f===first-1;
+    const garage=false;
+    const openings:Opening[]=b.id===2?[]:b.id===3?(entryFloor?[{x:entryX,w:1.9,sill:0,h:2.5}]:[]):entryFloor?[{x:entryX,w:1.9,sill:0,h:2.5},...(garage?[{x:entryX-3.45,w:4.0,sill:0,h:2.5}]:[]),{x:-b.w*.3,w:2.4,sill:1.8,h:.6}]:[-b.w*.3,0,b.w*.3].map(x=>({x,w:2.4,sill:1.8,h:.6}));
     facade(g,b.w,2.83,base+.12,0,4.5,0,openings);
     if(garage){
      // Common vehicle portal next to the entrance indicated in the October sketch.
@@ -72,7 +110,7 @@ export function detailExterior(structure:T.Group,m:Palette){
      for(let i=0;i<15;i++)box(g,3.96,.025,.025,x,base+.12+i*.16,4.68,'stone');
      box(g,4.4,.16,2.3,x,base+.02,5.5,'stone');counts.garagePortals++;
     }
-    if(f===first-1){
+    if(entryFloor){
      const entry=new T.Group();entry.position.x=entryX;g.add(entry);counts.frontEntrances.push({x:b.x+entryX,y:base});
      // Recessed communal entrance: white portal, dark door, horizontal glazing and intercom.
      // Appearance follows the supplied perspective; dimensions remain illustrative.
@@ -88,22 +126,35 @@ export function detailExterior(structure:T.Group,m:Palette){
      // Low white returns frame the approach while leaving the door route open.
      for(const side of [-1,1])box(entry,.18,.85,2.4,side*1.65,base+.49,5.85);
     }
-    for(const x of (entryFloor?[-b.w*.3]:[-b.w*.3,0,b.w*.3]))for(let j=0;j<6;j++)box(g,2.36,.035,.12,x,base+1.94+j*.095,4.6,'graphite');
+    if(b.id!==3&&b.id!==2)for(const x of (entryFloor?[-b.w*.3]:[-b.w*.3,0,b.w*.3]))for(let j=0;j<6;j++)box(g,2.36,.035,.12,x,base+1.94+j*.095,4.6,'graphite');
    }
    // Outer gables, with wraparound balconies at the eastern end in the source video.
    for(const side of [-1,1]){
     const outer=(b.id===1&&side===1)||(b.id===3&&side===-1);
-    const opening=outer&&f>=first?[-3.5,0,3.2].map((z,i)=>({x:z,w:b.id===1?2.55:i===1?1.35:1.8,sill:b.id===1?.16:.85,h:b.id===1?2.34:1.5})):[];
-    facade(g,12.5,2.83,base+.12,side*(b.w/2-.12),0,side===1?-Math.PI/2:Math.PI/2,opening);counts.sideWindows+=opening.length;
+    const west=outer&&b.id===3&&f>=first;
+    const opening:Opening[]=outer&&f>=first?(west?
+     [{x:-4.65,w:2.15,sill:.16,h:2.34,panes:2},{x:-1.10,w:3.65,sill:.16,h:2.34,panes:3},{x:3.5,w:2.0,sill:2.05,h:.40,panes:1}]:
+     f===0?[{x:2.0,w:5.1,sill:.16,h:2.34,panes:4}]:
+     (f===2?[-4.5,-.25,4]:[-3.5,-.45,4]).map(x=>({x,w:2.15,sill:.16,h:2.34,panes:2}))):[];
+    // The penthouse side wall belongs at x=4.4, not at the outer terrace edge x=11.
+    const sideX=penthouse&&side===1?4.4:side*(b.w/2-.12)+(west?1.4:0);
+    facade(g,12.5,2.83,base+.12,sideX,0,side===1?-Math.PI/2:Math.PI/2,opening);counts.sideWindows+=opening.length;
+    if(west){
+     box(g,1.55,.22,7.2,-b.w/2+.65,base,2.8);
+     rail(g,7.2,-b.w/2-.02,base+.2,2.8,Math.PI/2);
+     for(const z of [-.8,6.4])box(g,1.55,2.83,.20,-b.w/2+.65,base+1.535,z);
+     counts.sideBalconies++;counts.balconyEndWalls+=2;
+    }
     if(b.id===1&&side===1){box(g,1.75,.22,12.9,b.w/2+.75,base,0);rail(g,12.9,b.w/2+1.55,base+.2,0,Math.PI/2);// Full-height white returns close both ends of each side balcony.
      for(const end of [-1,1]){box(g,1.85,2.83,.22,b.w/2+.78,base+1.535,end*6.4);counts.balconyEndWalls++;}
      counts.sideBalconies++;}
    }
    const rear=f>=first?[-b.w*.35,-b.w*.16,b.w*.2,b.w*.39].map((x,i)=>({x,w:i%2?2.4:1.6,sill:.92,h:1.45})):[];
-   facade(g,b.w,2.83,base+.12,0,-6.2,Math.PI,rear);counts.rearWindows+=rear.length;
+   facade(g,width,2.83,base+.12,center,-6.2,Math.PI,penthouse?[]:rear);counts.rearWindows+=rear.length;
   }
   const top=b.levels*3.05;
-  box(g,b.w,.48,.23,0,top+.25,-6.4);for(const side of [-1,1])box(g,.23,.48,13,side*b.w/2,top+.25,0);
+  const roofWidth=b.id===2?15.4:b.w,roofCenter=b.id===2?-3.3:0;
+  box(g,roofWidth,.48,.23,roofCenter,top+.25,-6.4);for(const side of [-1,1])box(g,.23,.48,13,roofCenter+side*roofWidth/2,top+.25,0);
   // Projecting stair and lift core visible on the six general plans.
   const core=new T.Group();core.position.z=-7.9;g.add(core);counts.stairCores++;
   const entryLevel=b.id===1?0:b.id===2?1:2;const e=entryLevel*3.05;
@@ -127,7 +178,7 @@ export function detailExterior(structure:T.Group,m:Palette){
    for(let f=0;f<b.levels;f++)box(g,.13,.06,.13,side*(b.w/2-.3),f*3.05+.7,-6.4,'graphite');
   }
   // Ventilation terminals are visible on the animation; exact services are not supplied.
-  for(const x of [-b.w*.3,b.w*.3]){box(g,.62,.55,.62,x,top+.4,-3.9,'concrete');box(g,.85,.09,.85,x,top+.73,-3.9,'graphite');}
+  for(const x of (b.id===2?[-6,1]:[-b.w*.3,b.w*.3])){box(g,.62,.55,.62,x,top+.4,-3.9,'concrete');box(g,.85,.09,.85,x,top+.73,-3.9,'graphite');}
  }
  // Basement -1: curved vehicle approach is at the east end (PRE.AX.01).
  box(structure,65,.22,13,-.5,-3.05,0,'concrete');
